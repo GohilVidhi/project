@@ -73,6 +73,6 @@ urlpatterns = [
     path('add_address',views.add_address,name='add_address'),
     path('create_rating', views.create_rating, name='create_rating'),
     path('add_like/<int:id>', views.add_like, name='add_like'),
-    path('remove_dislike/<int:id>', views.remove_dislike, name='remove_dislike'),
+    path('remove_dislike/<int:id>', views.remove_dislike, name='remove_dislike')
 
 ]
