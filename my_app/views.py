@@ -185,58 +185,7 @@ def delete_cart(request,id):
     return redirect("cart")
 
 #==============Coupon==========================
-from django.utils import timezone
-# def apply_coupon(request):
-#     if "email" in request.session:
-#         uid = user.objects.get(email=request.session['email'])
-#         aid = Addtocart.objects.filter(user_id=uid)
-#         l1 = []
-#         sub_total = 0
-#         charge = 50
-#         for i in aid:
-#             l1.append(i.total_price)
-#         print(l1)
-#         sub_total = sum(l1)
-#         print("sub_total:- ", sub_total)
-#         total_price = sub_total + charge
-#         print("total price : ", total_price)
-#         discount = 0
-#         if request.POST:
-#             coupon = request.POST['code']
-#             print("code:- ", coupon)
-#             caid = Coupon_code.objects.filter(code=coupon,one_time_use=True).exists()
-#             print("coupon:-", caid)
-#             if caid:
-#                 cid = Coupon_code.objects.get(code=coupon)
-#                 now_time = timezone.now()
-#                 cid.one_time_use=False    #use coupon only one time then after false
-#                 cid.save()
-#                 if cid.expiry_date > now_time:
-#                     total_price -= cid.discount     
-#                     discount = cid.discount
-#                     request.session['discount'] = discount
-#                     con = {
-#                         "charge": charge, "sub_total": sub_total, "uid": uid,
-#                         "aid": aid, "discount": discount, "total_price": total_price}
-#                     messages.info(request, "Code applied successfully")
-#                     return redirect("cart")
-#                 else:
-#                     cid.delete()
-#                     con = {
-#                         "charge": charge, "sub_total": sub_total, "uid": uid, "aid": aid,
-#                         "total_price": total_price, "discount": 0}
-#                     messages.info(request, "Coupon has expired and has been deleted")
-#                     return render(request, "cart.html", con)
-#             else:
-#                 con = {
-#                     "charge": charge, "sub_total": sub_total, "uid": uid, "aid": aid,
-#                     "total_price": total_price, "discount": 0}
-#                 messages.info(request, "No discount on this code")
-#                 return redirect("cart")
-#         else:
-#             return render(request, "cart.html")
-#     else:   
-#         return render(request, "login.html")
+
 
 #=============product_details1 formate==================
 import math
@@ -1128,91 +1077,33 @@ def cart(request):
 
 #==============
 
-# from django.utils.timezone import now
-# def apply_coupon(request):
-#     uid=user.objects.get(email=request.session['email'])
-#     if request.POST:
-#         coupon_code=request.POST['code']
-#         print("coupon post",coupon_code)
-#         ccid=Coupon_code.objects.filter(coupon_code=coupon_code).exists()
-#         if ccid:
-#             ccid1=Coupon_code.objects.get(coupon_code=coupon_code)
-#             if ccid1.expiry_time < now():
-#                 messages.info(request, "Expired coupon")
-#                 return redirect("cart")
-#             uccid=User_coupon.objects.filter(user_id=uid,coupon_id=ccid1)
-#             if uccid:
-#                 messages.info(request,"exists")
-#                 return redirect("cart")
-            
-#             else:
-#                 User_coupon.objects.create(user_id=uid,coupon_id=ccid1,expiry_time=ccid1.expiry_time)
-#                 messages.info(request,"created")
-                
-#                 return redirect("cart")
-#         else:
-#             messages.info(request,"invalid coupon")
-            
-#             return redirect("cart")
-            
-#     else:
-#         return redirect("cart")
-    
 from django.utils.timezone import now
 def apply_coupon(request):
     uid=user.objects.get(email=request.session['email'])
     if request.POST:
         coupon_code=request.POST['code']
-        print(coupon_code)
+        print("coupon post",coupon_code)
         ccid=Coupon_code.objects.filter(coupon_code=coupon_code).exists()
-        
         if ccid:
             ccid1=Coupon_code.objects.get(coupon_code=coupon_code)
-            if ccid1.expiry_time<now():
-                messages.info(request,"expired coupon")
-                
+            if ccid1.expiry_time < now():
+                messages.info(request, "Expired coupon")
                 return redirect("cart")
-                
-            ucid=User_coupon.objects.filter(user_id=uid,coupon_id=ccid1).exists()
-            if ucid:
+            uccid=User_coupon.objects.filter(user_id=uid,coupon_id=ccid1)
+            if uccid:
                 messages.info(request,"exists")
                 return redirect("cart")
-                
-            else:
-                User_coupon.objects.create(user_id=uid,coupon_id=ccid1)
-                messages.info(request,"created")
-                return redirect("cart")
             
+            else:
+                User_coupon.objects.create(user_id=uid,coupon_id=ccid1,expiry_time=ccid1.expiry_time)
+                messages.info(request,"created")
+                
+                return redirect("cart")
         else:
             messages.info(request,"invalid coupon")
+            
             return redirect("cart")
+            
     else:
         return redirect("cart")
-
-#==============
-# def apply_coupon(request):
-#     uid=user.objects.get(email=request.session['email'])
-#     if request.POST:
-#         code=request.POST['code']
-#         print("dfsdsafdsfa",code)
-#         ceid=Coupon_code.objects.filter(coupon_code=code).exists()
-#         if ceid:
-#             ceid=Coupon_code.objects.get(coupon_code=code)
-#             ucid=User_coupon.objects.filter(user_id=uid,coupon_id=ceid).exists()
-#             if ucid:
-#                 messages.success(request,"user coupon exists")
-#                 return redirect(cart)
-#             else:
-                
-                
-#                 User_coupon.objects.create(user_id=uid,coupon_id=ceid)
-#                 messages.success(request,"success")
-                
-#                 return redirect(cart)
-#         else:
-#             messages.success(request,"not found")
-#             return redirect(cart)
-            
-                
-#     else:
-#         return render(request,"cart.html")   
+    
