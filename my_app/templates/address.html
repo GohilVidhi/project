@@ -1,0 +1,323 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+<style>
+  .razorpay-payment-button{
+    display: none;
+  }
+</style>
+<!--start page content-->
+<div class="page-content">
+
+  <!--start breadcrumb-->
+  <div class="py-4 border-bottom">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="javascript:;">Home</a></li>
+          <li class="breadcrumb-item"><a href="javascript:;">checkout</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Address</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+  <!--end breadcrumb-->
+
+  <!--start product details-->
+  <section class="section-padding">
+    <div class="container">
+      <div class="d-flex align-items-center px-3 py-2 border mb-4">
+        <div class="text-start">
+          <h4 class="mb-0 h4 fw-bold">Select Delivery Address</h4>
+        </div>
+      </div>
+      <div class="card rounded-0">
+        <div class="card-body">
+          <button type="button" class="btn btn-outline-dark btn-ecomm" data-bs-toggle="modal"
+          data-bs-target="#NewAddress">Add New Address</button>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-12 col-lg-8 col-xl-8">
+          <h6 class="fw-bold mb-3 py-2 px-3 bg-light">Default Address</h6>
+          
+          <form action="{% url 'address' %}" method="POST">
+            {% csrf_token %}
+            <script src="https://checkout.razorpay.com/v1/checkout.js" data-key="rzp_test_bilBagOBVTi4lE"
+          data-amount={{response.amount}} data-currency={{response.currency}} data-buttontext="Pay with Razorpay"
+          data-name="{{request.user}}" data-theme.color="#F37254" data-description="" data-image=""
+          data-prefill.name={{request.user.username}} data-prefill.email={{request.user.email}}>
+          </script>
+            {% for i in show_address %}
+            <div class="card rounded-0 mb-3">
+              <div class="card-body">
+                <div class="d-flex flex-column flex-xl-row gap-3">
+                  <div class="address-info form-check flex-grow-1">
+                    <input class="form-check-input" type="radio" name="address_id" value="{{i.id}}"
+                      id="flexRadioDefault{{forloop.counter}}" {% if forloop.first %}checked{% endif %}>
+                    <label class="form-check-label" for="flexRadioDefault{{forloop.counter}}">
+                      <span class="fw-bold mb-0 h5">{{i.name}}</span><br>{{i.address1}} , {{i.town}} , {{i.city}}
+                      {{i.state}} , {{i.pincode}}..<br>
+                      Mobile: <span class="text-dark fw-bold">+91 {{i.mobile}}</span>
+                    </label>
+                  </div>
+                  <div class="d-none d-xl-block vr"></div>
+                  <div class="d-grid gap-2 align-self-start align-self-xl-center">
+                    <a href="{% url 'delete_address' i.id %}"><button type="button"
+                        class="btn btn-outline-dark px-5 btn-ecomm">Remove</button></a>
+                    <button type="button" class="btn btn-outline-dark px-5 btn-ecomm" data-bs-toggle="modal"
+                      data-bs-target="#EditAddressModal-{{forloop.counter}}" style="width: 155px;">Edit</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+
+            
+        </div>
+
+        <div class="col-12 col-lg-4 col-xl-4">
+          <div class="card rounded-0 mb-3">
+            <div class="card-body">
+              <h5 class="fw-bold mb-4">Order Summary</h5>
+              <div class="hstack align-items-center justify-content-between">
+                <p class="mb-0">Bag Total</p>
+                <p class="mb-0">{{sub_total}}</p>
+              </div>
+              <hr>
+              <div class="hstack align-items-center justify-content-between">
+                <p class="mb-0">Bag discount</p>
+                <p class="mb-0 text-success">- {{discount}}</p>
+              </div>
+              <hr>
+              <div class="hstack align-items-center justify-content-between">
+                <p class="mb-0">Delivery</p>
+                <p class="mb-0">{{charge}}</p>
+              </div>
+              <hr>
+              <div class="hstack align-items-center justify-content-between fw-bold text-content">
+                <p class="mb-0">Total Amount</p>
+                <p class="mb-0">{{total_price}}</p>
+              </div>
+              <div class="d-grid mt-4">
+                <!-- <button id="continue-button" type="button" class="btn btn-dark btn-ecomm py-3 px-5">Continue</button> -->
+                {% if sub_total == 0 %}
+                 <input type="submit" value="Continue" class="btn btn-dark btn-ecomm py-3 px-5" disabled>
+                {% else %}
+                <input type="submit" value="Continue" class="btn btn-dark btn-ecomm py-3 px-5" >
+                {% endif %}
+              
+                
+              </div>
+            </div>
+          </div>
+        </div>
+        </form>
+
+        <div class="modal-body"></div>
+      </div><!--end row-->
+    </div>
+  </section>
+  <!--start product details-->
+</div>
+<!--end page content-->
+
+<!-- New Address Modal -->
+<div class="modal" id="NewAddress" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content rounded-0">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold">Add New Address</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'add_address' %}" method="POST">
+        {% csrf_token %}
+        <div class="">
+          <h6 class="fw-bold mb-3">Contact Details</h6>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control rounded-0" id="floatingName" placeholder="Name" name="name">
+            <label for="floatingName">Name</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control rounded-0" id="floatingMobileNo" placeholder="Mobile No"
+              name="mobile">
+            <label for="floatingMobileNo">Mobile No</label>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <h6 class="fw-bold mb-3">Address</h6>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control rounded-0" id="floatingPinCode" placeholder="Pin Code"
+              name="pincode">
+            <label for="floatingPinCode">Pin Code</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control rounded-0" id="floatingAddress"
+              placeholder="Address (House No, Building, Street, Area)" name="address1">
+            <label for="floatingAddress">Address</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control rounded-0" id="floatingLocalityTown" placeholder="Locality/Town"
+              name="town">
+            <label for="floatingLocalityTown">Locality / Town</label>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="form-floating">
+                <input type="text" class="form-control rounded-0" id="floatingCity" placeholder="City / District"
+                  name="city">
+                <label for="floatingAddress">City / District</label>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-floating">
+                <input type="text" class="form-control rounded-0" id="floatingState" placeholder="State" name="state">
+                <label for="floatingState">State</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="d-grid w-100">
+            <button type="submit" class="btn btn-dark py-3 px-5 btn-ecomm">Add Address</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- end New Address Modal -->
+
+{% for i in show_address %}
+<div class="modal fade" id="EditAddressModal-{{forloop.counter}}" tabindex="-1"
+  aria-labelledby="EditAddressModalLabel-{{forloop.counter}}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <form action="{% url 'edit_address' i.id %}" method="POST">
+      {% csrf_token %}
+      <div class="modal-content rounded-0">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold" id="EditAddressModalLabel">Edit Address</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Form Fields -->
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control rounded-0" id="floatingName" placeholder="Name" value="{{i.name}}"
+              name="name">
+            <label for="floatingName">Name</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control rounded-0" id="floatingMobileNo" placeholder="Mobile No"
+              value="{{i.mobile}}" name="mobile">
+            <label for="floatingMobileNo">Mobile No</label>
+          </div>  
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control rounded-0" id="floatingPinCode" placeholder="Pin Code"
+              value="{{i.pincode}}" name="pincode">
+            <label for="floatingPinCode">Pin Code</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control rounded-0" id="floatingAddress"
+              placeholder="Address (House No, Building, Street, Area)" value="{{i.address1}}" name="address1">
+            <label for="floatingAddress">Address</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control rounded-0" id="floatingLocalityTown" placeholder="Locality/Town"
+              value="{{i.town}}" name="town">
+            <label for="floatingLocalityTown">Locality / Town</label>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="form-floating">
+                <input type="text" class="form-control rounded-0" id="floatingCity" placeholder="City / District"
+                  value="{{i.city}}" name="city">
+                <label for="floatingCity">City / District</label>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-floating">
+                <input type="text" class="form-control rounded-1" id="floatingState" placeholder="State"
+                  value="{{i.state}}" name="state">
+                <label for="floatingState">State</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="d-grid w-100">
+            <button type="submit" class="btn btn-dark py-3 px-5 btn-ecomm">Save Address</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  </div>
+  {% endfor %}
+  <!-- <script src="https://checkout.razorpay.com/v1/checkout.js" data-key="rzp_test_bilBagOBVTi4lE"
+data-amount={{response.amount}} data-currency={{response.currency}} data-buttontext="Pay with Razorpay"
+data-name="{{request.user}}" data-theme.color="#F37254" data-description="" data-image=""
+data-prefill.name={{request.user.username}} data-prefill.email={{request.user.email}}>
+</script> -->
+
+
+
+
+  <!-- <script src="https://checkout.razorpay.com/v1/checkout.js" data-key="rzp_test_bilBagOBVTi4lE"
+    data-amount="{{ response.amount }}" data-currency="{{ response.currency }}" data-buttontext="Pay with Razorpay"
+    data-name="{{ request.user.username }}" data-theme.color="#F37254" data-description="" data-image=""
+    data-prefill.name="{{ request.user.username }}" data-prefill.email="{{ request.user.email }}">
+    </script>
+
+  <script>
+    document.getElementById('rzp-button').addEventListener('click', function (e) {
+      e.preventDefault();
+
+      var options = {
+        "key": "rzp_test_bilBagOBVTi4lE",
+        "amount": "{{ response.amount }}",
+        "currency": "{{ response.currency }}",
+        "name": "{{ request.user.username }}",
+        "description": "",
+        "image": "",
+        "handler": function (response) {
+          // Handle response here
+          console.log(response);
+        },
+        "prefill": {
+          "name": "{{ request.user.username }}",
+          "email": "{{ request.user.email }}"
+        },
+        "theme": {
+          "color": "#F37254"
+        }
+      };
+
+      var rzp = new Razorpay(options);
+      rzp.open();
+    });
+  </script> -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  document.getElementById('continue-button').onclick = function(e) {
+    e.preventDefault();
+    var options = {
+      "key": "rzp_test_bilBagOBVTi4lE",
+      "total_price": "{{response.total_price}}",
+      "currency": "{{response.currency}}",
+      "name": "{{request.user}}",
+      "description": "",
+      "image": "",
+      "prefill": {
+        "name": "{{request.user.username}}",
+        "email": "{{request.user.email}}"
+      },
+      "theme": {
+        "color": "#F37254"
+      }
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+  };
+</script>
+  {% endblock %}

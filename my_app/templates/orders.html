@@ -1,0 +1,226 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+
+
+<!--start page content-->
+<div class="page-content">
+
+
+   <!--start breadcrumb-->
+   <div class="py-4 border-bottom">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0"> 
+          <li class="breadcrumb-item"><a href="javascript:;">Home</a></li>
+          <li class="breadcrumb-item"><a href="javascript:;">Shop</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Shop With Grid</li>
+        </ol>
+      </nav>
+    </div>
+   </div>
+   <!--end breadcrumb-->
+
+
+   <!--start product details-->
+   <section class="section-padding">
+    <div class="container">
+      <div class="d-flex align-items-center px-3 py-2 border mb-4">
+        <div class="text-start">
+          <h4 class="mb-0 h4 fw-bold">Account - Orders</h4>
+       </div>
+      </div>
+      <div class="btn btn-dark btn-ecomm d-xl-none position-fixed top-50 start-0 translate-middle-y"  data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarFilter"><span><i class="bi bi-person me-2"></i>Account</span></div>
+       <div class="row">
+          <div class="col-12 col-xl-3 filter-column">
+              <nav class="navbar navbar-expand-xl flex-wrap p-0">
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbarFilter" aria-labelledby="offcanvasNavbarFilterLabel">
+                  <div class="offcanvas-header">
+                    <h5 class="offcanvas-title mb-0 fw-bold text-uppercase" id="offcanvasNavbarFilterLabel">Account</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label = "Close"></button>
+                  </div>
+                  <div class="offcanvas-body account-menu">
+                    <div class="list-group w-100 rounded-0">
+                      <a href="{% url 'orders' %}" class="list-group-item active"><i class="bi bi-basket3 me-2"></i>Orders</a>
+                      <a href="{% url 'profile' %}" class="list-group-item"><i class="bi bi-person me-2"></i>Profile</a>
+                      <a href="{% url 'edit_profile' %}" class="list-group-item"><i class="bi bi-pencil me-2"></i>Edit Profile</a>
+                      <a href="{% url 'show_Wishlist' %}" class="list-group-item"><i class="bi bi-suit-heart me-2"></i>Wishlist</a>
+                      <a href="{% url 'login' %}" class="list-group-item"><i class="bi bi-power me-2"></i>Logout</a>
+                    </div>
+                  </div>
+                </div>
+            </nav>
+          </div>
+          <div class="col-12 col-xl-9">
+
+            <div class="card rounded-0 mb-3 bg-light">
+              <div class="card-body">
+                <div class="d-flex flex-column flex-xl-row gap-3 align-items-center">
+                  <div class="">
+                     <h5 class="mb-1 fw-bold">All Orders</h5>
+                     <p class="mb-0">for anytime</p>
+                  </div>
+                  <div class="order-search flex-grow-1">
+                     <form>
+                      <div class="position-relative">
+                        <input type="text" class="form-control ps-5 rounded-0" placeholder="Search Product...">
+                        <span class="position-absolute top-50 product-show translate-middle-y"><i class="bi bi-search ms-3"></i></span>
+                     </div>
+                     </form>
+                  </div>
+                  <div class="filter">
+                    <button type="button" class="btn btn-dark rounded-0" data-bs-toggle="modal" data-bs-target="#FilterOrders"><i class="bi bi-filter me-2"></i>Filter</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {% for i in oid %}
+            <div class="card rounded-0 mb-3">
+              <div class="card-body">
+                <div class="d-flex flex-column flex-xl-row gap-3">
+                 <div class="product-img">
+                    <img src="{{i.image.url}}" width="120" alt="">
+                 </div>
+                  <div class="product-info flex-grow-1">
+                    <h5 class="fw-bold mb-1">{{i.name}}</h5>
+                      <p class="mb-0">Price : {{i.price}}</p>
+                      <p class="mb-0">Order Time : {{i.time}}</p> 
+                    <br>
+                    <p class="mb-0">add_Date : {{i.add_date}}</p>  
+
+                    
+
+                     <div class="mt-3 hstack gap-2">
+                       <button type="button" class="btn btn-sm border rounded-0">Size : {{i.size_order}}</button>
+                       <button type="button" class="btn btn-sm border rounded-0">Qty : {{i.quantity}}</button>
+                  </div>
+                </div>
+                <p class="mb-0">Status : {{i.status}}</p>
+
+                <div class="d-none d-xl-block vr"></div>
+                <div class="d-grid align-self-start align-self-xl-center">
+                 <button type="button" class="btn btn-outline-dark btn-ecomm">View Details</button>
+                </div>
+               </div>
+             </div>
+               
+              <div class="card-footer rounded-0 bg-transparent">
+                <div class="d-flex align-items-center gap-3">
+                  <p class="mb-1 fw-bold">Rate this Product</p>
+                  <div class="ratings">
+                    <i class="bi bi-star-fill text-warning h6"></i>
+                    <i class="bi bi-star-fill text-warning h6"></i>
+                    <i class="bi bi-star-fill text-warning h6"></i>
+                    <i class="bi bi-star h6"></i>
+                    <i class="bi bi-star h6"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+            <!-- <div class="card rounded-0 mb-3">
+              <div class="card-body">
+                <div class="d-flex flex-column flex-xl-row gap-3">
+                 <div class="product-img">
+                    <img src="{% static 'assets/images/featured-products/02.webp' %}" width="120" alt="">
+                 </div>
+                  <div class="product-info flex-grow-1">
+                    <h5 class="fw-bold mb-1">AKS - Checked Straight Kurta</h5>
+                      <p class="mb-0"> Women Pink & White Printed Straight Kurta</p>
+                     <div class="mt-3 hstack gap-2">
+                       <button type="button" class="btn btn-sm border rounded-0">Size : XXL</button>
+                       <button type="button" class="btn btn-sm border rounded-0">Qty : 2</button>
+                  </div>
+                 </div>
+                 <div class="d-none d-xl-block vr"></div>
+                 <div class="d-grid align-self-start align-self-xl-center">
+                  <button type="button" class="btn btn-outline-dark btn-ecomm">View Details</button>
+                 </div>
+                </div>
+              </div>
+              <div class="card-footer rounded-0 bg-transparent">
+                <div class="d-flex align-items-center gap-3">
+                  <p class="mb-1 fw-bold">Rate this Product</p>
+                  <div class="ratings">
+                    <i class="bi bi-star-fill text-warning h6"></i>
+                    <i class="bi bi-star-fill text-warning h6"></i>
+                    <i class="bi bi-star-fill text-warning h6"></i>
+                    <i class="bi bi-star h6"></i>
+                    <i class="bi bi-star h6"></i>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+
+          
+
+
+          </div>
+       </div><!--end row-->
+    </div>
+  </section>
+   <!--start product details-->
+
+
+   <!-- filter Modal -->
+    <div class="modal" id="FilterOrders" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content rounded-0">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold">Filter Orders</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <h6 class="mb-3 fw-bold">Status</h6>
+              <form action="{% url 'orders' %}" method="POST">
+                {% csrf_token %}
+              <div class="status-radio d-flex flex-column gap-2">
+               {% for i,n in ch %}
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" value="{{i}}" name="filter_order" id="flexRadioDefault2">
+                  <label  class="form-check-label" for="flexRadioDefault2">
+                    {{i}}
+                  </label>
+                </div>
+                {% endfor %}
+              </div>
+
+              <hr>
+              <h6 class="mb-3 fw-bold">Time</h6>
+              <div class="status-radio d-flex flex-column gap-2">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="filter_time" value="anytime" id="time-anytime" checked>
+                    <label class="form-check-label" for="time-anytime">Anytime</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="filter_time" value="last_30_days" id="time-30days">
+                    <label class="form-check-label" for="time-30days">Last 30 days</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="filter_time" value="last_6_months" id="time-6months">
+                    <label class="form-check-label" for="time-6months">Last 6 months</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="filter_time" value="last_year" id="time-lastyear">
+                    <label class="form-check-label" for="time-lastyear">Last year</label>
+                </div>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <div class="d-flex align-items-center gap-3 w-100">
+              <button type="button" class="btn btn-outline-dark btn-ecomm w-50">Clear Filters</button>
+              <input type="submit" class="btn btn-dark btn-ecomm w-50" value="Apply">
+            </div>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+    <!-- end Filters Modal -->
+
+
+ </div>
+  <!--end page content-->
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+
+<!--start page content-->
+<div class="page-content">
+  <!--start breadcrumb-->
+  <div class="py-4 border-bottom">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="javascript:;">Home</a></li>
+          <li class="breadcrumb-item"><a href="javascript:;">Shop</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Cart</li>
+        </ol>
+        <br>
+        <h3 style="color: #ff0d0d;" align="center">{% for msg in messages %}{{ msg }}{% endfor %}</h3>
+      </nav>
+    </div>
+  </div>
+  <!--end breadcrumb-->
+
+  <!--start product details-->
+  <section class="section-padding">
+    <div class="container">
+      <div class="d-flex align-items-center px-3 py-2 border mb-4">
+        <div class="text-start">
+          <h4 class="mb-0 h4 fw-bold">My Bag ({{cart_count}} items)</h4>
+        </div>
+
+        <div class="ms-auto">
+          <a href="{% url 'shop_grid' %}"><button type="button" class="btn btn-light btn-ecomm">Continue Shopping</button></a>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-12 col-xl-8">
+          {% for i in cid %}
+          <div class="card rounded-0 mb-3">
+            <div class="card-body">
+              <div class="d-flex flex-column flex-lg-row gap-3">
+                <div class="product-img">
+                  <a href="{% url 'product_details1' i.product_id.id %}">
+                    <img src="{{ i.image.url }}" width="150" alt="">
+                  </a>
+                </div>
+                <div class="product-info flex-grow-1">
+                  <h5 class="fw-bold mb-0">{{ i.name }}</h5>
+                  <div class="product-price d-flex align-items-center gap-2 mt-3">
+                    <div class="h6 fw-bold">&#8377; {{ i.price }}</div>
+    
+                  </div>
+                  <div class="mt-3 hstack gap-2">
+                    <button type="button" class="btn btn-sm btn-light border rounded-0">
+                      Size: {{ i.size_cart.name }}
+                    </button>
+                    <button type="button" class="btn btn-sm btn-light border rounded-0">
+                      Color: {{ i.color_cart.name }}
+                    </button>
+                    <button type="button" class="btn btn-sm btn-light border rounded-0" data-bs-toggle="modal"
+                      data-bs-target="#QtyModal{{ i.id }}">
+                      Qty: {{ i.quantity }}
+                    </button>
+                  </div>
+                  <br>
+                  <h4>Total Price : = &#8377; {{i.total_price}}</h4>
+                </div>
+                <div class="d-none d-lg-block vr"></div>
+                <div class="d-grid gap-2 align-self-start align-self-lg-center">
+                  <button type="button" class="btn btn-ecomm">
+                    <a href="{% url 'delete_cart' i.id %}"><i class="bi bi-x-lg me-2"></i>Remove</a>
+                  </button>
+                  <button type="button" class="btn dark btn-ecomm">
+                    <a href="{% url 'wishlist' i.product_id.id %}?next={% url 'cart' %}"><i
+                        class="bi bi-suit-heart me-2"></i>Move to Wishlist</a>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quantity Modal -->
+          <div class="modal fade" id="QtyModal{{ i.id }}" tabindex="-1" aria-labelledby="QtyModalLabel{{ i.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content" style="width: 300px;">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="QtyModalLabel{{ i.id }}">Update Quantity</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="size-chart">
+                    <form action="{% url 'cart_quantity_update' %}" method="POST" id="quantityForm">
+                      {% csrf_token %}
+                      <input type="hidden" value="{{ i.id }}" name="product_id">
+                      <div class="row justify-content-center align-items-center">
+                        {% for q in "123456789" %}
+                        <div class="col-4 mb-3 d-flex justify-content-center">
+                          <input class="btn-check" type="radio" value="{{ forloop.counter }}" name="quantity" id="quantity{{ forloop.counter }}">
+                          <label class="btn btn-light" for="quantity{{ forloop.counter }}" style="height: 50px; width: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            {{ q }}
+                          </label>
+                        </div>
+                        {% endfor %}
+                      </div>
+                      <div class="mt-4">
+                        <button type="submit"  class="btn btn-dark  w-100 btn-ecomm"style="border-radius: 0px" id="submitButton" disabled>Done</button>
+
+                          
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="col-12 col-xl-4">
+          <div class="card rounded-0 mb-3">
+            <div class="card-body">
+              <h5 class="fw-bold mb-4">Order Summary</h5>
+              <div class="hstack align-items-center justify-content-between">
+                <p class="mb-0">Bag Total</p>
+                <p class="mb-0">{{sub_total}}</p>
+              </div>
+              <hr>
+              <div class="hstack align-items-center justify-content-between">
+                <p class="mb-0">Bag discount</p>
+                <p class="mb-0 text-success">-{{discount}}</p>
+              </div>
+              <hr>
+              <div class="hstack align-items-center justify-content-between">
+                <p class="mb-0">Delivery</p>
+                <p class="mb-0">{{charge}}</p>
+              </div>
+              <hr>
+              <div class="hstack align-items-center justify-content-between fw-bold text-content">
+                <p class="mb-0">Total Amount</p>
+                <p class="mb-0">{{total_price}}</p>
+              </div>
+              <div class="d-grid mt-4">
+                <a href="{% url 'address' %}" class="btn btn-dark"><button type="button" class="btn btn-dark  py-3 px-5">Place Order</button></a>
+              </div>
+            </div>
+          </div>
+          {% if cid.count > 0 %}
+          <div class="card rounded-0">
+            <div class="card-body">
+              <h5 class="fw-bold mb-4">Apply Coupon</h5>
+              <form action="{% url 'apply_coupon' %}" method="POST">
+                {% csrf_token %}
+              <div class="input-group">
+                <input type="text" name="code" class="form-control rounded-0" placeholder="Enter coupon code">
+                <button class="btn btn-dark btn-ecomm rounded-0" type="submit">Apply</button>
+              </div>
+            </form>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div><!-- end row -->
+    </div>
+  </section>
+  <!-- start product details -->
+</div>
+<!-- end page content -->
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('quantityForm');
+    const submitButton = document.getElementById('submitButton');
+    const radios = form.querySelectorAll('input[name="quantity"]');
+
+    radios.forEach(radio => {
+      radio.addEventListener('change', function () {
+        if (form.querySelector('input[name="quantity"]:checked')) {
+          submitButton.disabled = false;
+        }
+        
+      });
+    });
+  });
+</script>
+{% endblock %}
+
+

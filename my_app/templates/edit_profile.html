@@ -1,0 +1,163 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+
+
+<!--start page content-->
+<div class="page-content">
+
+
+   <!--start breadcrumb-->
+   <div class="py-4 border-bottom">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0"> 
+          <li class="breadcrumb-item"><a href="javascript:;">Home</a></li>
+          <li class="breadcrumb-item"><a href="javascript:;">Account</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Profile</li>
+        </ol>
+      </nav>
+    </div>
+   </div>
+   <!--end breadcrumb-->
+
+
+   <!--start product details-->
+   <section class="section-padding">
+    <div class="container">
+      <h4 style="text-align: center;" class="fw-bold mb-3">{{e_msg}}</h4>
+      <div class="d-flex align-items-center px-3 py-2 border mb-4">
+        <div class="text-start">
+          <h4 class="mb-0 h4 fw-bold">Account - Edit Profile</h4>
+       </div>
+      </div>
+      <div class="btn btn-dark btn-ecomm d-xl-none position-fixed top-50 start-0 translate-middle-y"  data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarFilter"><span><i class="bi bi-person me-2"></i>Account</span></div>
+       <div class="row">
+          <div class="col-12 col-xl-3 filter-column">
+              <nav class="navbar navbar-expand-xl flex-wrap p-0">
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbarFilter" aria-labelledby="offcanvasNavbarFilterLabel">
+                  <div class="offcanvas-header">
+                    <h5 class="offcanvas-title mb-0 fw-bold text-uppercase" id="offcanvasNavbarFilterLabel">Account</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                  </div>
+                  <div class="offcanvas-body account-menu">
+                    <div class="list-group w-100 rounded-0">
+                      <a href="{% url 'orders' %}" class="list-group-item"><i class="bi bi-basket3 me-2"></i>Orders</a>
+                      <a href="{% url 'profile' %}" class="list-group-item"><i class="bi bi-person me-2"></i>Profile</a>
+                      <a href="{% url 'edit_profile' %}" class="list-group-item active"><i class="bi bi-pencil me-2"></i>Edit Profile</a>
+                      <a href="{% url 'show_Wishlist' %}" class="list-group-item"><i class="bi bi-suit-heart me-2"></i>Wishlist</a>
+                      <a href="{% url 'login' %}" class="list-group-item"><i class="bi bi-power me-2"></i>Logout</a>
+                    </div>
+                  </div>
+                </div>
+            </nav>
+          </div>
+          <div class="col-12 col-xl-7">
+            <div class="card rounded-0">
+              <div class="card-body p-lg-5">
+                  <h5 class="mb-0 fw-bold">Edit Details</h5>
+                  <hr>
+                   <form action="{% url 'edit_profile' %}" method="POST">
+                    {% csrf_token %}
+                     <div class="row row-cols-1 g-3">
+                        <div class="col">
+                          <div class="form-floating">
+                            <input type="text" class="form-control rounded-0" id="floatingInputName" placeholder="Name" name="name" value="{{uid.name}}">
+                            <label for="floatingInputName">Name</label>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="form-floating">
+                            <input type="text" class="form-control rounded-0" id="floatingInputNumber" placeholder="Name" name="mobile" value="{{uid.mobile}}">
+                            <label for="floatingInputNumber">Mobile Number</label>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="form-floating">
+                            <input type="text" class="form-control rounded-0" id="floatingInputEmail" placeholder="Email" name="email" value="{{uid.email}}">
+                            <label for="floatingInputEmail">Email</label>
+                          </div>
+                        </div>
+                        <div class="col">
+                          {% for i, n in GENDER_CHOICES %}
+                          <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="gender" id="inlineRadio{{i}}" value="{{i}}"
+                              {% if uid.gender == i %}checked{% endif %}>
+                              <label class="form-check-label" for="inlineRadio{{i}}">{{n}}</label>
+                          </div>
+                      {% endfor %}
+                          <!-- <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                            <label class="form-check-label" for="inlineRadio2">Female</label>
+                          </div> -->
+                        </div>
+                        <div class="col">
+                          <div class="form-floating">
+                            <input type="date" class="form-control rounded-0" id="floatingInputDOB" value="{{ uid.DOB|date:'Y-m-d' }}" name="DOB">
+                            <label for="floatingInputDOB">Date of Birth</label>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="form-floating">
+                            <input type="text" class="form-control rounded-0" id="floatingInputLocation" placeholder="Location"  name="location" value="{{uid.location}}">
+                            <label for="floatingInputLocation">Location</label>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <button type="submit" class="btn btn-dark py-3 btn-ecomm w-100">Save Details</button>
+                        </div>
+                        <div class="col">
+                          <button type="button" class="btn btn-outline-dark py-3 btn-ecomm w-100" data-bs-toggle="modal" data-bs-target="#ChangePasswordModal">Change Password</button>
+                        </div>
+                        
+
+                     </div>
+                   </form>
+              </div>
+            </div>
+          </div>
+       </div><!--end row-->
+    </div>
+  </section>
+   <!--start product details-->
+
+
+   <!-- Change Password Modal -->
+    <div class="modal" id="ChangePasswordModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content rounded-0">
+          <div class="modal-body">
+            <h5 class="fw-bold mb-3">Change Password</h5>
+            <h6 class="fw-bold mb-3">{{e_msg}}</h6>
+
+            <hr>
+              <form action="{% url 'change_password' %}" method="POST">
+                {% csrf_token %}
+                <div class="form-floating mb-3">
+                  <input type="text" class="form-control rounded-0" id="floatingInputOldPass" placeholder="Old Password"  name="old_password">
+                  <label for="floatingInputOldPass">Old Password</label>
+                </div>
+                <div class="form-floating mb-3">
+                  <input type="text" class="form-control rounded-0" id="floatingInputNewPass" placeholder="New Password" name="new_password">
+                  <label for="floatingInputNewPass">New Password</label>
+                </div>
+                <div class="form-floating mb-3">
+                  <input type="text" class="form-control rounded-0" id="floatingInputConPass" placeholder="Confirm Password" name="c_password">
+                  <label for="floatingInputConPass" >Confirm Password</label>
+                </div>
+                <div class="d-grid gap-3 w-100">
+                  <button type="submit" class="btn btn-dark py-3 btn-ecomm">Change</button>
+                  <button type="button" class="btn btn-outline-dark py-3 btn-ecomm" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                </div>
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end Change Password Modal -->
+
+
+ </div>
+  <!--end page content-->
+
+{% endblock %}
